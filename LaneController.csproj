@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net35</TargetFramework>
+		<Deterministic>false</Deterministic>
+		<AssemblyTitle>LaneController</AssemblyTitle>
+		<AssemblyVersion>1.0.*</AssemblyVersion>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<LangVersion>preview</LangVersion>
+		<AssemblyName>LaneController</AssemblyName>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+	<Target Name="DeployToModDirectory" AfterTargets="Build">
+		<PropertyGroup>
+			<ModDirectory>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\</ModDirectory>
+		</PropertyGroup>
+		<ItemGroup>
+			<ModFiles Include="$(TargetDir)*.*" />
+		</ItemGroup>
+		<RemoveDir Directories="$(ModDirectory)" />
+		<Copy SourceFiles="@(ModFiles)" DestinationFolder="$(ModDirectory)" />
+	</Target>
+	<ItemGroup>
+	  <Compile Remove="libs\**" />
+	  <EmbeddedResource Remove="libs\**" />
+	  <None Remove="libs\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="CitiesHarmony.API" Version="2.2.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="ColossalManaged">
+			<HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="ICities">
+			<HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="MoveItIntegration">
+		  <HintPath>libs\MoveItIntegration.dll</HintPath>
+		  <Private>False</Private>
+		</Reference>
+		<Reference Include="UnifiedUILib">
+		  <HintPath>libs\UnifiedUILib.dll</HintPath>
+		  <Private>True</Private>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+	<Target Name="ExcludeModdingReferences" AfterTargets="ResolveAssemblyReferences;CopyFilesToOutputDirectory">
+		<ItemGroup>
+			<!-- Remove specific DLLs from the copy list -->
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)"
+			  Condition="'%(Filename)' == 'PopsApiWrapper' or 
+                 '%(Filename)' == 'Assembly-CSharp-firstpass' or 
+                 '%(Filename)' == 'ICSharpCode.SharpZipLib'" />
+
+			<!-- Identify and delete any leftover PDB files in the output directory -->
+			<DeletePdbFiles Include="$(TargetDir)*.pdb" />
+		</ItemGroup>
+
+		<!-- This task actively deletes the PDBs after the build finishes -->
+		<Delete Files="@(DeletePdbFiles)" />
+	</Target>
+</Project>
