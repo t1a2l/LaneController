@@ -60,10 +60,7 @@
 	<Target Name="ExcludeModdingReferences" AfterTargets="ResolveAssemblyReferences;CopyFilesToOutputDirectory">
 		<ItemGroup>
 			<!-- Remove specific DLLs from the copy list -->
-			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)"
-			  Condition="'%(Filename)' == 'PopsApiWrapper' or 
-                 '%(Filename)' == 'Assembly-CSharp-firstpass' or 
-                 '%(Filename)' == 'ICSharpCode.SharpZipLib'" />
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' == 'PopsApiWrapper' or &#xD;&#xA;                 '%(Filename)' == 'Assembly-CSharp-firstpass' or &#xD;&#xA;                 '%(Filename)' == 'ICSharpCode.SharpZipLib'" />
 
 			<!-- Identify and delete any leftover PDB files in the output directory -->
 			<DeletePdbFiles Include="$(TargetDir)*.pdb" />
